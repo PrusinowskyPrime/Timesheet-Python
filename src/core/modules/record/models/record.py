@@ -10,7 +10,7 @@ from time_sheet.src.infrastructure.ports.api.v1.common.validators import (
 )
 
 
-class Task(MongoDBModel):
+class Record(MongoDBModel):
     name: str = Field(..., min_length=5, max_length=50)
     start: datetime
     end: datetime
@@ -18,7 +18,7 @@ class Task(MongoDBModel):
     owner_id: str
 
     @model_validator(mode="after")
-    def validate_task_fields(self):
+    def validate_record_fields(self):
         validate_object_id_type(self.owner_id)
         validate_date_format_from_date_time(self.start)
         validate_date_format_from_date_time(self.end)

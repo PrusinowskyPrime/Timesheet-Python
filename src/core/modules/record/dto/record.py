@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class TaskDTO(BaseModel):
+class RecordDTO(BaseModel):
     id: Optional[str] = Field(alias="_id")
     name: str
     start: datetime

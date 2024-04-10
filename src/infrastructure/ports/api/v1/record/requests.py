@@ -10,7 +10,7 @@ from time_sheet.src.infrastructure.ports.api.v1.common.validators import (
 )
 
 
-class TaskBaseRequest(BaseModel):
+class RecordBaseRequest(BaseModel):
     name: str = Field(..., min_length=5, max_length=50)
     start: datetime
     end: datetime
@@ -26,9 +26,9 @@ class TaskBaseRequest(BaseModel):
         return data
 
 
-class TaskCreateRequest(TaskBaseRequest):
+class RecordCreateRequest(RecordBaseRequest):
     pass
 
 
-class TaskUpdateRequest(TaskBaseRequest):
+class RecordUpdateRequest(RecordBaseRequest):
     pass
