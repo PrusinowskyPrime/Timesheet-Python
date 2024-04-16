@@ -4,63 +4,43 @@ from typing import List
 from app.application.modules.project.dtos import (
     ProjectCreateDTO,
     ProjectUpdateDTO,
-    ProjectWithOwnerDTO,
+    ProjectDTO,
 )
-from app.application.modules.project.use_cases import ProjectCreateUseCase, ProjectDeleteUseCase, ProjectGetAllUseCase, \
-    ProjectGetByIdUseCase, ProjectGetByOwnerIdUseCase, ProjectLoadOwnerUseCase, ProjectUpdateUseCase
+from app.application.modules.project.repositories import IProjectRepository
+from app.application.modules.time_log.dtos import TimeLogDTO
 
 
 class ProjectService:
-    def __init__(
-        self,
-        create_use_case: ProjectCreateUseCase,
-        delete_use_case: ProjectDeleteUseCase,
-        update_use_case: ProjectUpdateUseCase,
-        get_all_use_case: ProjectGetAllUseCase,
-        get_by_id_use_case: ProjectGetByIdUseCase,
-        get_by_owner_id: ProjectGetByOwnerIdUseCase,
-        load_owner_use_case: ProjectLoadOwnerUseCase,
-    ):
-        self._create_use_case = create_use_case
-        self._delete_use_case = delete_use_case
-        self._update_use_case = update_use_case
-        self._get_all_use_case = get_all_use_case
-        self._get_by_id_use_case = get_by_id_use_case
-        self._get_by_owner_id = get_by_owner_id
-        self._load_owner_use_case = load_owner_use_case
+    def __init__(self, repository: IProjectRepository):
+        self._repository = repository
 
-    async def create(self, request_dto: ProjectCreateDTO) -> ProjectWithOwnerDTO:
-        project = await self._create_use_case.execute(request_dto)
+    async def create(self, request_dto: ProjectCreateDTO) -> ProjectDTO:
+        project_dto = ProjectDTO(**request_dto.model_dump(), time_logs=[], _idF=None)
 
-        return await self._load_owner_use_case.execute(project)
+        return await self._repository.save(project_dto)
 
-    async def update(
-        self, project_id: str, request_dto: ProjectUpdateDTO
-    ) -> ProjectWithOwnerDTO:
-        project = await self._update_use_case.execute(
-            request_dto=request_dto, project_id=project_id
+    async def update(self, project_id: str, request_dto: ProjectUpdateDTO) -> ProjectDTO:
+        return await self._repository.update(
+            ProjectDTO(**request_dto.model_dump() | {"_id": project_id})
         )
 
-        return await self._load_owner_use_case.execute(project)
-
     async def delete(self, project_id: str) -> None:
-        return await self._delete_use_case.execute(project_id)
+        return await self._repository.delete(project_id)
 
-    async def get_all(self, name: str | None = None) -> List[ProjectWithOwnerDTO]:
-        projects = await self._get_all_use_case.execute(name)
+    async def get_all(self, name: str | None = None) -> List[ProjectDTO]:
+        return await self._repository.get_all(name)
 
-        return [
-            await self._load_owner_use_case.execute(project) for project in projects
-        ]
+    async def get_by_id(self, project_id: str) -> ProjectDTO:
+        return await self._repository.get_by_id(project_id)
 
-    async def get_by_id(self, project_id: str) -> ProjectWithOwnerDTO:
-        project = await self._get_by_id_use_case.execute(project_id)
+    async def get_by_owner_id(self, owner_id: str) -> List[ProjectDTO]:
+        return await self._repository.get_by_owner_id(owner_id)
 
-        return await self._load_owner_use_case.execute(project)
+    async def add_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        return await self._repository.add_time_log(project_id, time_log)
 
-    async def get_by_owner_id(self, owner_id: str) -> List[ProjectWithOwnerDTO]:
-        projects = await self._get_by_owner_id.execute(owner_id)
+    async def delete_time_log(self, project_id: str, time_log_id: str) -> ProjectDTO:
+        return await self._repository.delete_time_log(project_id, time_log_id)
 
-        return [
-            await self._load_owner_use_case.execute(project) for project in projects
-        ]
+    async def update_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        return await self._repository.update_time_log(project_id, time_log)

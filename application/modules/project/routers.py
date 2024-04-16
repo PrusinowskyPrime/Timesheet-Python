@@ -2,17 +2,14 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, status
 
+from app.application.dependencies.auth.permissions import get_current_user
 from app.application.dependencies.project_factories import get_project_service
+from app.application.modules.auth.dtos import CurrentUserDTO
+from app.application.modules.common.responses import ErrorResponse
 from app.application.modules.project.dtos import (
     ProjectCreateDTO,
-    ProjectUpdateDTO,
+    ProjectUpdateDTO, ProjectDTO,
 )
-from app.application.modules.project.services import (
-    ProjectService,
-)
-from app.application.modules.auth.dtos import CurrentUserDTO
-from app.application.dependencies.auth.permissions import get_current_user
-from app.application.modules.common.responses import ErrorResponse
 from app.application.modules.project.requests import (
     ProjectCreateRequest,
     ProjectUpdateRequest,
@@ -20,6 +17,10 @@ from app.application.modules.project.requests import (
 from app.application.modules.project.responses import (
     ProjectBaseResponse,
 )
+from app.application.modules.project.services import (
+    ProjectService,
+)
+from app.application.modules.time_log.dtos import TimeLogDTO
 
 router = APIRouter(prefix="/api/v1/projects", tags=["APIv1 Project"])
 
@@ -59,7 +60,8 @@ async def update_project(
     project_service: Annotated[ProjectService, Depends(get_project_service)],
 ):
     return await project_service.update(
-        project_id=project_id, request_dto=ProjectUpdateDTO(**request.model_dump())
+        project_id=project_id,
+        request_dto=ProjectUpdateDTO(**request.model_dump())
     )
 
 
@@ -93,8 +95,8 @@ async def get_by_owner_id_projects(
 
 @router.get(
     "/",
-    response_model=List[ProjectBaseResponse],
-    responses={200: {"model": List[ProjectBaseResponse]}},
+    response_model=List[ProjectDTO],
+    responses={200: {"model": List[ProjectDTO]}},
     status_code=status.HTTP_200_OK,
 )
 async def get_all_projects(
@@ -115,3 +117,53 @@ async def get_by_id(
     project_service: Annotated[ProjectService, Depends(get_project_service)],
 ):
     return await project_service.get_by_id(project_id)
+
+@router.post(
+    "/{project_id}/time_logs",
+    response_model=ProjectBaseResponse,
+    responses={
+        200: {"model": ProjectBaseResponse},
+        404: {"model": ErrorResponse},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def add_time_log(
+    project_id: str,
+    time_log: TimeLogDTO,
+    project_service: Annotated[ProjectService, Depends(get_project_service)],
+):
+    return await project_service.add_time_log(project_id, time_log)
+
+
+@router.delete(
+    "/{project_id}/time_logs/{time_log_id}",
+    response_model=ProjectBaseResponse,
+    responses={
+        200: {"model": ProjectBaseResponse},
+        404: {"model": ErrorResponse},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def delete_time_log(
+    project_id: str,
+    time_log_id: str,
+    project_service: Annotated[ProjectService, Depends(get_project_service)],
+):
+    return await project_service.delete_time_log(project_id, time_log_id)
+
+
+@router.put(
+    "/{project_id}/time_logs/{time_log_id}",
+    response_model=ProjectBaseResponse,
+    responses={
+        200: {"model": ProjectBaseResponse},
+        404: {"model": ErrorResponse},
+    },
+    status_code=status.HTTP_200_OK,
+)
+async def update_time_log(
+    project_id: str,
+    time_log: TimeLogDTO,
+    project_service: Annotated[ProjectService, Depends(get_project_service)],
+):
+    return await project_service.update_time_log(project_id, time_log)

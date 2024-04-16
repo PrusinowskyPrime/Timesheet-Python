@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class LogDTO(BaseModel):
+class TimeLogDTO(BaseModel):
     start_time: str
     end_time: str
     details: str

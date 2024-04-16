@@ -1,19 +1,21 @@
 from typing import Annotated, List
+
 from fastapi import APIRouter, Depends, status
+
+from app.application.dependencies.user_factories import (
+    get_user_service,
+)
 from app.application.modules.common.responses import ErrorResponse
 from app.application.modules.user.dtos import (
     UserCreateDTO,
     UserUpdateDTO,
-)
-from app.application.modules.user.services import UserService
-from app.application.dependencies.user_factories import (
-    get_user_service,
 )
 from app.application.modules.user.requests import (
     UserCreateRequest,
     UserUpdateRequest,
 )
 from app.application.modules.user.responses import UserBaseResponse
+from app.application.modules.user.services import UserService
 
 router = APIRouter(prefix="/api/v1/users", tags=["APIv1 User"])
 

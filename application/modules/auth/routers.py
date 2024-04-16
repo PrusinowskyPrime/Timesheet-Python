@@ -4,19 +4,19 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.application.dependencies.auth.creators import get_refresh_token_service
-from app.application.modules.auth.services import LoginService, PasswordChangeService, RefreshTokenService
-from app.application.modules.auth.dtos import CurrentUserDTO, ChangePasswordDTO
 from app.application.dependencies.auth.permissions import get_current_user
 from app.application.dependencies.auth.providers import (
     get_password_change_service,
     get_login_service,
 )
+from app.application.modules.auth.dtos import CurrentUserDTO, ChangePasswordDTO
 from app.application.modules.auth.repsonses import (
     LoginSuccessResponse,
 )
 from app.application.modules.auth.requests import (
     PasswordChangeRequest,
 )
+from app.application.modules.auth.services import LoginService, PasswordChangeService, RefreshTokenService
 from app.application.modules.common.responses import ErrorResponse
 from app.application.modules.user.responses import UserBaseResponse
 from app.settings.oauth2 import oauth2_scheme

@@ -1,14 +1,15 @@
 # pylint: disable=R0801, R0913, C0301, R0902:
 from typing import List
 
+from app.application.modules.user.use_cases import UserCheckIfEmailExistUseCase, UserCreateUseCase, UserDeleteUseCase, \
+    UserGetAllUseCase, UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase, UserUpdateUseCase
+
 from app.application.modules.auth.services import PasswordHashService
+from app.application.modules.common.exceptions import EmailAlreadyExists
 from app.application.modules.user.dtos import (
     UserCreateDTO,
     UserUpdateDTO, UserDTO,
 )
-from app.application.modules.user.use_cases import UserCheckIfEmailExistUseCase, UserCreateUseCase, UserDeleteUseCase, \
-    UserGetAllUseCase, UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase, UserUpdateUseCase
-from app.application.modules.common.exceptions import EmailAlreadyExists
 
 
 class UserService:

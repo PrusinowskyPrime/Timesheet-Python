@@ -6,6 +6,7 @@ from motor.core import AgnosticCollection, AgnosticClientSession
 
 from app.application.modules.project.dtos import ProjectDTO
 from app.application.modules.project.models import Project
+from app.application.modules.time_log.dtos import TimeLogDTO
 
 
 class IProjectRepository(ABC):
@@ -31,6 +32,22 @@ class IProjectRepository(ABC):
 
     @abstractmethod
     async def update(self, project: ProjectDTO) -> ProjectDTO:
+        pass
+
+    @abstractmethod
+    async def get_all_time_logs(self) -> List[TimeLogDTO]:
+        pass
+
+    @abstractmethod
+    async def add_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        pass
+
+    @abstractmethod
+    async def update_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        pass
+
+    @abstractmethod
+    async def delete_time_log(self, project_id: str, time_log_id: str) -> ProjectDTO:
         pass
 
 
@@ -83,3 +100,24 @@ class ProjectRepository(IProjectRepository):
             ProjectDTO(**document | {"_id": str(document["_id"])})
             for document in documents
         ]
+
+    async def add_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        await self._session.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$push": {"time_logs": time_log.dict()}}
+        )
+        return await self.get_by_id(project_id)
+
+    async def delete_time_log(self, project_id: str, time_log_id: str) -> ProjectDTO:
+        await self._session.update_one(
+            {"_id": ObjectId(project_id)},
+            {"$pull": {"time_logs": {"id": time_log_id}}}
+        )
+        return await self.get_by_id(project_id)
+
+    async def update_time_log(self, project_id: str, time_log: TimeLogDTO) -> ProjectDTO:
+        await self._session.update_one(
+            {"_id": ObjectId(project_id), "time_logs.id": time_log.id},
+            {"$set": {"time_logs.$": time_log.dict()}}
+        )
+        return await self.get_by_id(project_id)

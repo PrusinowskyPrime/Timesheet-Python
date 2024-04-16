@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel, Field
 
-from app.application.modules.log.dtos import LogDTO
+from app.application.modules.time_log.dtos import TimeLogDTO
 from app.application.modules.user.dtos import UserGetDTO
 
 
@@ -33,5 +33,5 @@ class ProjectDTO(BaseModel):
     id: Optional[str] = Field(alias="_id")
     name: str
     description: str
-    records: List[LogDTO]
+    time_logs: List[TimeLogDTO]
     owner_id: str

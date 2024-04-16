@@ -1,26 +1,23 @@
 # pylint: disable=R0913, C0301
 from typing import Annotated
 
+from app.application.modules.user.use_cases import UserCheckIfEmailExistUseCase, UserCreateUseCase, UserDeleteUseCase, \
+    UserGetAllUseCase, UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase, UserUpdateUseCase
 from fastapi import Depends
 from motor.core import AgnosticClientSession
 
-from app.application.modules.user.repositories import (
-    UserRepository,
-)
-from app.application.modules.auth.services import PasswordHashService
-from app.application.modules.user.mappers import (
-    UserDTOToGetMapper,
-)
-from app.application.modules.user.services import UserService
-from app.application.modules.user.use_cases import UserCheckIfEmailExistUseCase, UserCreateUseCase, UserDeleteUseCase, \
-    UserGetAllUseCase, UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase, UserUpdateUseCase
-from app.application.modules.user.repository import (
-    IUserRepository,
-)
 from app.application.dependencies.auth.creators import (
     get_password_hash_service,
 )
 from app.application.dependencies.database import get_session
+from app.application.modules.auth.services import PasswordHashService
+from app.application.modules.user.mappers import (
+    UserDTOToGetMapper,
+)
+from app.application.modules.user.repositories import (
+    UserRepository, IUserRepository,
+)
+from app.application.modules.user.services import UserService
 
 
 def get_user_dto_to_get_mapper() -> UserDTOToGetMapper:

@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.application.modules.common.exceptions import BaseHttpException
-from app.exception_handlers import http_exception_handler
+from app.application.modules.common.exception_handlers import http_exception_handler
 from app.application.modules.auth.routers import (
     router as auth_router,
 )

@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 
+from app.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 
-from app.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
-from app.application.modules.auth.dtos import SuccessAuthenticationDTO, AuthenticatedUserDTO, ChangePasswordDTO, CurrentUserDTO
+from app.application.modules.auth.dtos import SuccessAuthenticationDTO, AuthenticatedUserDTO, ChangePasswordDTO, \
+    CurrentUserDTO
 from app.application.modules.common.exceptions import InvalidCredentials
 from app.application.modules.user.dtos import UserDTO
-from app.application.modules.user.repository import IUserRepository
+from app.application.modules.user.repositories import IUserRepository
 
 
 class PasswordHashService:
