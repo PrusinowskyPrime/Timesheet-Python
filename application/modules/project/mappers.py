@@ -1,6 +1,7 @@
 from app.application.modules.project.dtos import (
     ProjectGetDTO,
-    ProjectWithOwnerDTO, ProjectDTO,
+    ProjectWithOwnerDTO,
+    ProjectDTO,
 )
 
 
