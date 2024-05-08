@@ -1,8 +1,6 @@
 # pylint: disable=R0913, C0301
 from typing import Annotated
 
-from app.application.modules.user.use_cases import UserCheckIfEmailExistUseCase, UserCreateUseCase, UserDeleteUseCase, \
-    UserGetAllUseCase, UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase, UserUpdateUseCase
 from fastapi import Depends
 from motor.core import AgnosticClientSession
 

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from app.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 
@@ -8,7 +7,6 @@ from app.application.modules.auth.dtos import SuccessAuthenticationDTO, Authenti
     CurrentUserDTO
 from app.application.modules.common.exceptions import InvalidCredentials
 from app.application.modules.user.dtos import UserDTO
-from app.application.modules.user.repositories import IUserRepository
 
 
 class PasswordHashService:
@@ -28,30 +26,11 @@ class PasswordVerifyService:
 
 
 class PasswordChangeService:
-    def __init__(
-        self,
-        user_repository: IUserRepository,
-        get_by_id_use_case: UserGetByIdUseCase,
-        hash_service: PasswordHashService,
-        verify_service: PasswordVerifyService,
-    ):
-        self._user_repository = user_repository
-        self._get_by_id_use_case = get_by_id_use_case
-        self._hash_service = hash_service
-        self._verify_service = verify_service
 
     async def change_password(
         self, user_id: str, request: ChangePasswordDTO
     ) -> UserDTO:
-        user = await self._get_by_id_use_case.execute(user_id)
-
-        if not self._verify_service.verify(request.current_password, user.password):
-            raise InvalidCredentials()
-
-        user.password = self._hash_service.hash(request.password)
-        user = await self._user_repository.update(user)
-
-        return user
+        pass
 
 
 class TokenService:
@@ -121,18 +100,6 @@ class RefreshTokenService:
 
 
 class LoginService:
-    def __init__(
-        self,
-        verify_service: PasswordVerifyService,
-        token_service: TokenService,
-        user_get_by_email_or_username_use_case: UserGetByEmailOrUsernameUseCase,
-    ):
-        self._verify_service = verify_service
-        self._token_service = token_service
-        self._user_get_by_email_or_username_use_case = (
-            user_get_by_email_or_username_use_case
-        )
-
     async def login(self, username: str, password: str) -> SuccessAuthenticationDTO:
         user = await self._authenticate(username, password)
 
