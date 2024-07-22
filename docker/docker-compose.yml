@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  budget:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    container_name: time-sheet-db
+
+volumes:
+  mysql-data:
