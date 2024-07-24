@@ -20,7 +20,7 @@ class UserGetDTO(UserBaseDTO):
 
 
 class UserDTO(BaseModel):
-    id: int
+    id: int | None
     fullname: str
     email: str
     password: str

@@ -4,10 +4,10 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.dependencies.auth.creators import (
+from src.dependencies.auth.creators import (
     get_password_hash_service,
 )
-from src.application.dependencies.database import get_session
+from src.dependencies.database import get_session
 from src.application.modules.auth.services import PasswordHashService
 from src.application.modules.user.mappers import UserCreateDTOToDomainMapper, UserDomainToModelMapper
 from src.application.modules.user.mappers import UserModelToDomainMapper

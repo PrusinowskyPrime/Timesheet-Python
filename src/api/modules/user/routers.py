@@ -2,7 +2,7 @@ from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, status
 
-from src.application.dependencies.user_factories import (
+from src.dependencies.user_factories import (
     get_user_service,
 )
 from src.application.modules.common.responses import ErrorResponse
@@ -10,7 +10,7 @@ from src.application.modules.user.dtos import (
     UserCreateDTO,
     UserUpdateDTO,
 )
-from src.application.modules.user.requests import (
+from src.api.modules.user.requests import (
     UserCreateRequest,
     UserUpdateRequest,
 )
@@ -43,7 +43,7 @@ async def create_user(
     status_code=status.HTTP_200_OK,
 )
 async def update_user(
-    user_id: str,
+    user_id: int,
     request: UserUpdateRequest,
     user_service: Annotated[UserService, Depends(get_user_service)],
 ):

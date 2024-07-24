@@ -49,7 +49,7 @@ class UserRepository(IUserRepository):
     async def save(self, user: UserDTO) -> UserDTO:
         model = self._user_domain_to_model_mapper.map(user)
 
-        self._session.add(user)
+        self._session.add(model)
         await self._session.commit()
 
         return self._user_model_to_domain_mapper.map(model)
@@ -61,11 +61,16 @@ class UserRepository(IUserRepository):
         return user
 
     async def delete(self, user: UserDTO) -> None:
-        await self._session.delete(self._user_domain_to_model_mapper.map(user))
+        model = await self._session.execute(
+            select(UserModel).where(UserModel.id == user.id)
+        )
+        model = model.scalar_one_or_none()
+
+        await self._session.delete(model)
         await self._session.commit()
 
     async def get_all(self) -> List[UserDTO]:
-        result = await self._session.execute(select(User))
+        result = await self._session.execute(select(UserModel))
         data = []
 
         for user in result.scalars().all():
@@ -73,12 +78,12 @@ class UserRepository(IUserRepository):
 
         return data
 
-    async def get_by_id(self, user_id: int) -> User | None:
+    async def get_by_id(self, user_id: int) -> UserDTO | None:
         result = await self._session.execute(
-            select(UserModel).where(User.id == user_id)
+            select(UserModel).where(UserModel.id == user_id)
         )
 
-        return result.scalars().first()
+        return self._user_model_to_domain_mapper.map(result.scalars().first())
 
     async def get_by_email(self, email: str) -> UserDTO | None:
         result = await self._session.execute(
@@ -88,7 +93,7 @@ class UserRepository(IUserRepository):
 
         return self._user_model_to_domain_mapper.map(result.scalars().first())
 
-    async def get_by_fullname(self, fullname: str) -> User | None:
+    async def get_by_fullname(self, fullname: str) -> UserDTO | None:
         result = await self._session.execute(
             select(UserModel)
             .where(UserModel.fullname == fullname)

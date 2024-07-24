@@ -24,28 +24,30 @@ class UserService:
         self._password_hasher = password_hasher
 
     async def create(self, create_dto: UserCreateDTO) -> UserDTO:
-        # Check if user exists
+        if await self._check_if_user_with_email_exists(create_dto.email):
+            raise ObjectDoesNotExist # AlreadyExists
+
         dto = self._user_create_dto_to_domain_mapper.map(create_dto)
         dto.password = self._password_hasher.hash(create_dto.password)
 
-        return self._user_repository.save(create_dto)
+        return await self._user_repository.save(dto)
 
     async def update(self, user_id: int, request_dto: UserUpdateDTO) -> UserDTO:
-        dto = self.get_by_id(user_id)
+        dto = await self.get_by_id(user_id)
         dto.fullname = request_dto.fullname
 
-        return self._user_repository.update(request_dto)
+        return await self._user_repository.update(dto)
 
     async def delete(self, user_id: int) -> None:
-        dto = self.get_by_id(user_id)
+        dto = await self.get_by_id(user_id)
 
-        self._user_repository.delete(dto)
+        await self._user_repository.delete(dto)
 
     async def get_all(self) -> List[UserDTO]:
-        return self._user_repository.get_all()
+        return await self._user_repository.get_all()
 
     async def get_by_id(self, user_id: int) -> UserDTO:
-        dto = self._user_repository.get_by_id(user_id)
+        dto = await self._user_repository.get_by_id(user_id)
 
         if dto is None:
             raise ObjectDoesNotExist
@@ -53,13 +55,13 @@ class UserService:
         return dto
 
     async def get_by_email_or_username(self, field: str) -> UserDTO:
-        dto = self._user_repository.get_by_email(field)
+        dto = await self._user_repository.get_by_email(field)
         if dto is not None:
             return dto
 
-        dto = self._user_repository.get_by_fullname(field)
+        dto = await self._user_repository.get_by_fullname(field)
         if dto is not None:
             return dto
 
-    async def check_if_user_with_email_exists(self, email: str) -> bool:
+    async def _check_if_user_with_email_exists(self, email: str) -> bool:
         return self._user_repository.get_by_email(email) is None

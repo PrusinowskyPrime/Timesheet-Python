@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-MONGO_INITDB_ROOT_USERNAME: str | None = os.getenv("MONGO_INITDB_ROOT_USERNAME")
-MONGO_INITDB_ROOT_PASSWORD: str | None = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
-MONGO_INITDB_DATABASE: str = os.getenv("MONGO_INITDB_DATABASE")  # type: ignore
-MONGO_INITDB_USERNAME: str | None = os.getenv("MONGO_INITDB_USERNAME")
-MONGO_INITDB_PASSWORD: str | None = os.getenv("MONGO_INITDB_PASSWORD")
-MONGO_DB_URL: str = (
-    f"mongodb://{MONGO_INITDB_ROOT_USERNAME}:{MONGO_INITDB_ROOT_PASSWORD}"
-    f"@localhost:27017/{MONGO_INITDB_DATABASE}?authMechanism=DEFAULT&authSource=admin"
+DB_ROOT_PASSWORD: str | None = "root_password"
+DB_USER: str | None = "my_user"
+DB_PASSWORD: str | None = "my_password"
+DB_HOST: str | None = "localhost"
+DB_PORT: str | None = "3306"
+DB_NAME: str | None = "my_database"
+
+DATABASE_URL: str = (
+    f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 )

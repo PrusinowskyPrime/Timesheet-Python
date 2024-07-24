@@ -1,14 +1,14 @@
 from src.application.modules.user.dtos import UserGetDTO, UserDTO
 
-from application.modules.user.dtos import UserCreateDTO
-from application.modules.user.models import UserModel
+from src.application.modules.user.dtos import UserCreateDTO
+from src.application.modules.user.models import UserModel
 
 
 class UserModelToDomainMapper:
     def map(self, model: UserModel) -> UserDTO:
         return UserDTO(
             id=model.id,
-            fullname=model.id,
+            fullname=model.fullname,
             email=model.email,
             password=model.password
         )
@@ -18,7 +18,7 @@ class UserDomainToModelMapper:
     def map(self, dto: UserDTO) -> UserModel:
         return UserModel(
             id=dto.id,
-            fullname=dto.id,
+            fullname=dto.fullname,
             email=dto.email,
             password=dto.password
         )
@@ -26,7 +26,7 @@ class UserDomainToModelMapper:
 class UserCreateDTOToDomainMapper:
     def map(self, dto: UserCreateDTO) -> UserDTO:
         return UserDTO(
-            id=0,
+            id=None,
             fullname=dto.fullname,
             email=dto.email,
             password=''

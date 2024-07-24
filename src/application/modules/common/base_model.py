@@ -7,4 +7,5 @@ from sqlalchemy.orm import declarative_base
 class Base:
     id: MappedColumn[int] = mapped_column(Integer, primary_key=True, index=True)
 
+
 BaseModel = declarative_base(cls=Base)
