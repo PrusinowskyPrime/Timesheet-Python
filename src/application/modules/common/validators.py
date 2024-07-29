@@ -6,7 +6,6 @@ from src.application.modules.common.exceptions import (
     InvalidDateFormat,
     InvalidDateRange,
 )
-from src.application.modules.common.object_id import ObjectId
 
 
 def validate_date_format_from_string(date: str) -> None:
@@ -35,10 +34,3 @@ def validate_date_format_from_date_time(date: datetime) -> None:
 def validate_date_range(start: datetime, end: datetime) -> None:
     if start > end:
         raise InvalidDateRange
-
-
-def validate_object_id_type(object_id: str) -> None:
-    try:
-        ObjectId(object_id)
-    except InvalidId as exception:
-        raise ValueError("Not a valid ObjectId") from exception

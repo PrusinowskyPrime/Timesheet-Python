@@ -63,5 +63,7 @@ class UserService:
         if dto is not None:
             return dto
 
+        raise ObjectDoesNotExist()
+
     async def _check_if_user_with_email_exists(self, email: str) -> bool:
         return self._user_repository.get_by_email(email) is None

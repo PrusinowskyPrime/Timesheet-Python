@@ -19,11 +19,11 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, user_id: str) -> UserDTO | None:
+    async def get_by_id(self, user_id: int) -> UserDTO | None:
         pass
 
     @abstractmethod
-    async def delete(self, user_id: str) -> None: ...
+    async def delete(self, user: UserDTO) -> None: ...
 
     @abstractmethod
     async def update(self, user: UserDTO) -> UserDTO: ...

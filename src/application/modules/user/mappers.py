@@ -5,7 +5,10 @@ from src.application.modules.user.models import UserModel
 
 
 class UserModelToDomainMapper:
-    def map(self, model: UserModel) -> UserDTO:
+    def map(self, model: UserModel | None) -> UserDTO | None:
+        if model is None:
+            return None
+
         return UserDTO(
             id=model.id,
             fullname=model.fullname,
