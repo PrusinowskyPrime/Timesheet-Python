@@ -52,7 +52,7 @@ class UserRepository(IUserRepository):
         self._session.add(model)
         await self._session.commit()
 
-        return self._user_model_to_domain_mapper.map(model)
+        return self._user_model_to_domain_mapper.map(model) # type: ignore
 
     async def update(self, user: UserDTO) -> UserDTO:
         model = self._user_domain_to_model_mapper.map(user)
@@ -75,7 +75,7 @@ class UserRepository(IUserRepository):
         for user in result.scalars().all():
             data.append(self._user_model_to_domain_mapper.map(user))
 
-        return data
+        return data # type: ignore
 
     async def get_by_id(self, user_id: int) -> UserDTO | None:
         result = await self._session.execute(
