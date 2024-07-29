@@ -28,7 +28,7 @@ class PasswordVerifyService:
 class PasswordChangeService:
 
     async def change_password(
-        self, user_id: str, request: ChangePasswordDTO
+        self, user_id: str, request: ChangePasswordDTO # pylint: disable=W0613
     ) -> UserDTO | None:
         return None
 

@@ -1,7 +1,5 @@
 from datetime import datetime, timezone
 
-from bson.errors import InvalidId
-
 from src.application.modules.common.exceptions import (
     InvalidDateFormat,
     InvalidDateRange,

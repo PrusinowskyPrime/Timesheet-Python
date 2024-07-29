@@ -17,7 +17,6 @@ SessionLocal = async_sessionmaker[AsyncSession]
 
 
 def async_engine_factory() -> AsyncEngine:
-    print(DATABASE_URL)
     return create_async_engine(url=DATABASE_URL, pool_size=50, max_overflow=100)
 
 

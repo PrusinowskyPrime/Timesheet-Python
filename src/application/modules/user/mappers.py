@@ -1,6 +1,5 @@
-from src.application.modules.user.dtos import UserGetDTO, UserDTO
-
 from src.application.modules.user.dtos import UserCreateDTO
+from src.application.modules.user.dtos import UserDTO
 from src.application.modules.user.models import UserModel
 
 
