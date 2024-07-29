@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.modules.user.dtos import UserDTO
@@ -55,18 +55,17 @@ class UserRepository(IUserRepository):
         return self._user_model_to_domain_mapper.map(model)
 
     async def update(self, user: UserDTO) -> UserDTO:
+        model = self._user_domain_to_model_mapper.map(user)
+
+        await self._session.merge(model)
         await self._session.commit()
-        await self._session.refresh(user)
 
         return user
 
     async def delete(self, user: UserDTO) -> None:
-        model = await self._session.execute(
-            select(UserModel).where(UserModel.id == user.id)
-        )
-        model = model.scalar_one_or_none()
+        query = delete(UserModel).where(UserModel.id == user.id)
 
-        await self._session.delete(model)
+        await self._session.execute(query)
         await self._session.commit()
 
     async def get_all(self) -> List[UserDTO]:
