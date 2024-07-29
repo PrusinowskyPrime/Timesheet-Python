@@ -38,4 +38,4 @@ jobs:
 
       - name: Pylint code linting
         run:
-          pylint .
+          pylint src
