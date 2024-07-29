@@ -29,8 +29,8 @@ class PasswordChangeService:
 
     async def change_password(
         self, user_id: str, request: ChangePasswordDTO
-    ) -> UserDTO:
-        pass
+    ) -> UserDTO | None:
+        return None
 
 
 class TokenService:
