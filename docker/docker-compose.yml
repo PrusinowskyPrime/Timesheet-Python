@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: database/Dockerfile
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/my.cnf:/etc/mysql/my.cnf
+    container_name: time-sheet-db
+    networks:
+      - timesheet-network
+
+volumes:
+  mysql-data:
+
+networks:
+  timesheet-network:
+    driver: bridge
