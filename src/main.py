@@ -12,10 +12,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.application.modules.common.exceptions import BaseHttpException
 from src.application.modules.common.exception_handlers import http_exception_handler
 from src.api.modules.user.routers import router as user_router
+from src.api.modules.auth.routers import router as auth_router
 
 app = FastAPI()
 app.add_exception_handler(BaseHttpException, http_exception_handler)  # type: ignore
+
 app.include_router(user_router)
+app.include_router(auth_router)
 
 app.add_middleware(
     CORSMiddleware,

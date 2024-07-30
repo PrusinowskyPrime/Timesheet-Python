@@ -10,6 +10,7 @@ from src.application.modules.user.repositories import IUserRepository
 
 from src.application.modules.auth.services import PasswordHashService
 from src.application.modules.common.exceptions import ObjectDoesNotExist
+from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 
 
 class UserService:
@@ -17,11 +18,15 @@ class UserService:
         self,
         user_repository: IUserRepository,
         user_create_dto_to_domain_mapper: UserCreateDTOToDomainMapper,
-        password_hasher: PasswordHashService
+        password_hasher: PasswordHashService,
+        user_get_by_email_or_username_use_case: UserGetByEmailOrUsernameUseCase,
+        user_get_by_id_use_case: UserGetByIdUseCase
     ):
         self._user_repository = user_repository
         self._user_create_dto_to_domain_mapper = user_create_dto_to_domain_mapper
         self._password_hasher = password_hasher
+        self._user_get_by_email_or_username_use_case = user_get_by_email_or_username_use_case
+        self._user_get_by_id_use_case = user_get_by_id_use_case
 
     async def create(self, create_dto: UserCreateDTO) -> UserDTO:
         if await self._check_if_user_with_email_exists(create_dto.email):
@@ -39,7 +44,7 @@ class UserService:
         return await self._user_repository.update(dto)
 
     async def delete(self, user_id: int) -> None:
-        dto = await self.get_by_id(user_id)
+        dto = await self._user_get_by_id_use_case.execute(user_id)
 
         await self._user_repository.delete(dto)
 
@@ -47,23 +52,10 @@ class UserService:
         return await self._user_repository.get_all()
 
     async def get_by_id(self, user_id: int) -> UserDTO:
-        dto = await self._user_repository.get_by_id(user_id)
-
-        if dto is None:
-            raise ObjectDoesNotExist
-
-        return dto
+        return await self._user_get_by_id_use_case.execute(user_id)
 
     async def get_by_email_or_username(self, field: str) -> UserDTO:
-        dto = await self._user_repository.get_by_email(field)
-        if dto is not None:
-            return dto
-
-        dto = await self._user_repository.get_by_fullname(field)
-        if dto is not None:
-            return dto
-
-        raise ObjectDoesNotExist()
+        return await self._user_get_by_email_or_username_use_case.execute(field)
 
     async def _check_if_user_with_email_exists(self, email: str) -> bool:
         return self._user_repository.get_by_email(email) is None

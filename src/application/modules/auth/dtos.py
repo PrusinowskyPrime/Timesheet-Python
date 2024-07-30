@@ -6,12 +6,12 @@ from pydantic import BaseModel
 
 
 class AuthenticatedUserDTO(BaseModel):
-    id: Optional[str] = None
+    id: Optional[int] = None
     sub: str
 
 
 class CurrentUserDTO(BaseModel):
-    id: str
+    id: int
     email: str
 
     class ConfigDict:

@@ -7,6 +7,8 @@ from src.application.modules.auth.dtos import SuccessAuthenticationDTO, Authenti
     CurrentUserDTO
 from src.application.modules.common.exceptions import InvalidCredentials
 from src.application.modules.user.dtos import UserDTO
+from src.application.modules.user.repositories import IUserRepository
+from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 
 
 class PasswordHashService:
@@ -26,11 +28,24 @@ class PasswordVerifyService:
 
 
 class PasswordChangeService:
+    def __init__(
+        self,
+        user_repository: IUserRepository,
+        user_get_by_id_use_case: UserGetByIdUseCase,
+        password_hash_service: PasswordHashService
+    ):
+        self._user_repository = user_repository
+        self._user_get_by_id_use_case = user_get_by_id_use_case
+        self._password_hash_service = password_hash_service
 
     async def change_password(
-        self, user_id: str, request: ChangePasswordDTO # pylint: disable=W0613
+        self, user_id: int, request: ChangePasswordDTO # pylint: disable=W0613
     ) -> UserDTO | None:
-        return None
+        user = await self._user_get_by_id_use_case.execute(user_id)
+        # Dodać walidację hasła
+        user.password = self._password_hash_service.hash(request.password)
+
+        return await self._user_repository.update(user)
 
 
 class TokenService:
@@ -99,21 +114,31 @@ class RefreshTokenService:
         )
 
 
-# class LoginService:
-#     async def login(self, username: str, password: str) -> SuccessAuthenticationDTO:
-#         user = await self._authenticate(username, password)
-#
-#         return SuccessAuthenticationDTO(
-#             token_type="Bearer",
-#             access_token=self._token_service.create_access_token(user),
-#             refresh_token=self._token_service.create_refresh_token(user),
-#             expired_at=self._token_service.get_expire_token_datetime(),
-#         )
-#
-#     async def _authenticate(self, username: str, password: str) -> AuthenticatedUserDTO:
-#         user = await self._user_get_by_email_or_username_use_case.execute(username)
-#
-#         if not self._verify_service.verify(password, user.password):
-#             raise InvalidCredentials()
-#
-#         return AuthenticatedUserDTO(id=user.id, sub=user.email)
+class LoginService:
+    def __init__(
+        self,
+        token_service: TokenService,
+        password_verify_service: PasswordVerifyService,
+        user_get_by_email_or_username_use_case: UserGetByEmailOrUsernameUseCase
+    ):
+        self._token_service = token_service
+        self._password_verify_service = password_verify_service
+        self._user_get_by_email_or_username_use_case = user_get_by_email_or_username_use_case
+
+    async def login(self, username: str, password: str) -> SuccessAuthenticationDTO:
+        user = await self._authenticate(username, password)
+
+        return SuccessAuthenticationDTO(
+            token_type="Bearer",
+            access_token=self._token_service.create_access_token(user),
+            refresh_token=self._token_service.create_refresh_token(user),
+            expired_at=self._token_service.get_expire_token_datetime(),
+        )
+
+    async def _authenticate(self, username: str, password: str) -> AuthenticatedUserDTO:
+        user = await self._user_get_by_email_or_username_use_case.execute(username)
+
+        if not self._password_verify_service.verify(password, user.password):
+            raise InvalidCredentials()
+
+        return AuthenticatedUserDTO(id=user.id, sub=user.email)
