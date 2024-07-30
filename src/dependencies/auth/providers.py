@@ -1,9 +1,12 @@
 # pylint: disable=C0301
 from typing import Annotated
 
-from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 from fastapi import Depends
 
+from src.application.modules.auth.services import LoginService, PasswordHashService, PasswordVerifyService, \
+    PasswordChangeService, TokenService
+from src.application.modules.user.repositories import IUserRepository
+from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 from src.dependencies.auth.creators import (
     get_password_hash_service,
     get_password_verify_service,
@@ -14,9 +17,6 @@ from src.dependencies.user_factories import (
     get_user_get_by_id_use_case,
     get_user_get_by_email_or_username_use_case,
 )
-from src.application.modules.auth.services import LoginService, PasswordHashService, PasswordVerifyService, \
-    PasswordChangeService, TokenService
-from src.application.modules.user.repositories import IUserRepository
 
 
 def get_password_change_service(
