@@ -3,18 +3,24 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.api.modules.auth.repsonses import (
-    LoginSuccessResponse,
-)
 from src.api.modules.auth.requests import PasswordChangeRequest
-from src.application.modules.auth.dtos import CurrentUserDTO, ChangePasswordDTO
-from src.application.modules.auth.services import LoginService, RefreshTokenService, PasswordChangeService
+from src.application.modules.auth.dtos import (
+    CurrentUserDTO,
+    ChangePasswordDTO,
+    SuccessAuthenticationDTO,
+)
+from src.application.modules.auth.services import (
+    LoginService,
+    RefreshTokenService,
+    PasswordChangeService,
+)
 from src.application.modules.common.responses import ErrorResponse
 from src.application.modules.user.dtos import UserGetDTO
 from src.dependencies.auth.creators import get_refresh_token_service
 from src.dependencies.auth.permissions import get_current_user
 from src.dependencies.auth.providers import (
-    get_login_service, get_password_change_service,
+    get_login_service,
+    get_password_change_service,
 )
 from src.settings.oauth2 import oauth2_scheme
 
@@ -24,11 +30,11 @@ router = APIRouter(prefix="/api/v1/auth", tags=["APIv1 Auth"])
 @router.post(
     "/login",
     responses={
-        200: {"model": LoginSuccessResponse},
+        200: {"model": SuccessAuthenticationDTO},
         404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
-    response_model=LoginSuccessResponse,
+    response_model=SuccessAuthenticationDTO,
     status_code=status.HTTP_200_OK,
 )
 async def login(
@@ -41,11 +47,11 @@ async def login(
 @router.post(
     "/refresh-token",
     responses={
-        200: {"model": LoginSuccessResponse},
+        200: {"model": SuccessAuthenticationDTO},
         401: {"model": ErrorResponse},
         404: {"model": ErrorResponse},
     },
-    response_model=LoginSuccessResponse,
+    response_model=SuccessAuthenticationDTO,
     status_code=status.HTTP_200_OK,
 )
 async def refresh_token(
@@ -62,6 +68,7 @@ async def refresh_token(
     responses={
         200: {"model": UserGetDTO},
         401: {"model": ErrorResponse},
+        404: {"model": ErrorResponse},
         409: {"model": ErrorResponse},
     },
     response_model=UserGetDTO,

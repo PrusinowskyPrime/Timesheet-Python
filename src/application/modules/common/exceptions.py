@@ -11,6 +11,11 @@ class ObjectDoesNotExist(BaseHttpException):
     detail = "Object does not exist"
 
 
+class ObjectAlreadyExists(BaseHttpException):
+    status_code = HTTPStatus.CONFLICT
+    detail = "Object already exists"
+
+
 class InvalidDateFormat(BaseHttpException):
     status_code = HTTPStatus.BAD_REQUEST
     detail = "Invalid date format. It must be in the format %Y-%m-%dT%H:%M:%S.%fZ"
@@ -29,8 +34,3 @@ class InvalidCredentials(BaseHttpException):
 class PasswordDoesNotMatch(BaseHttpException):
     status_code = HTTPStatus.CONFLICT
     detail = "Passwords does not match"
-
-
-class EmailAlreadyExists(BaseHttpException):
-    status_code = HTTPStatus.CONFLICT
-    detail = "Email already exists"

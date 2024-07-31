@@ -3,14 +3,18 @@ from typing import List
 
 from src.application.modules.user.dtos import (
     UserCreateDTO,
-    UserUpdateDTO, UserDTO,
+    UserUpdateDTO,
+    UserDTO,
 )
 from src.application.modules.user.mappers import UserCreateDTOToDomainMapper
 from src.application.modules.user.repositories import IUserRepository
 
 from src.application.modules.auth.services import PasswordHashService
 from src.application.modules.common.exceptions import ObjectDoesNotExist
-from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
+from src.application.modules.user.use_cases import (
+    UserGetByEmailOrUsernameUseCase,
+    UserGetByIdUseCase,
+)
 
 
 class UserService:
@@ -20,17 +24,19 @@ class UserService:
         user_create_dto_to_domain_mapper: UserCreateDTOToDomainMapper,
         password_hasher: PasswordHashService,
         user_get_by_email_or_username_use_case: UserGetByEmailOrUsernameUseCase,
-        user_get_by_id_use_case: UserGetByIdUseCase
+        user_get_by_id_use_case: UserGetByIdUseCase,
     ):
         self._user_repository = user_repository
         self._user_create_dto_to_domain_mapper = user_create_dto_to_domain_mapper
         self._password_hasher = password_hasher
-        self._user_get_by_email_or_username_use_case = user_get_by_email_or_username_use_case
+        self._user_get_by_email_or_username_use_case = (
+            user_get_by_email_or_username_use_case
+        )
         self._user_get_by_id_use_case = user_get_by_id_use_case
 
     async def create(self, create_dto: UserCreateDTO) -> UserDTO:
         if await self._check_if_user_with_email_exists(create_dto.email):
-            raise ObjectDoesNotExist # AlreadyExists
+            raise ObjectDoesNotExist()
 
         dto = self._user_create_dto_to_domain_mapper.map(create_dto)
         dto.password = self._password_hasher.hash(create_dto.password)

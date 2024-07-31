@@ -27,6 +27,6 @@ class UserGetByIdUseCase:
         dto = await self._user_repository.get_by_id(user_id)
 
         if dto is None:
-            raise ObjectDoesNotExist
+            raise ObjectDoesNotExist()
 
         return dto

@@ -3,6 +3,7 @@ from fastapi import status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
+from src.application.modules.auth.exceptions import PasswordsAreNotTheSame
 from src.application.modules.common.exceptions import (
     BaseHttpException,
     ObjectDoesNotExist,
@@ -10,7 +11,7 @@ from src.application.modules.common.exceptions import (
     InvalidDateRange,
     InvalidCredentials,
     PasswordDoesNotMatch,
-    EmailAlreadyExists,
+    ObjectAlreadyExists,
 )
 
 
@@ -45,9 +46,15 @@ def http_exception_handler(request: Request, exception: BaseHttpException):
             content={"detail": exception.detail},
         )
 
-    if isinstance(exception, EmailAlreadyExists):
+    if isinstance(exception, ObjectAlreadyExists):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
+            content={"detail": exception.detail},
+        )
+
+    if isinstance(exception, PasswordsAreNotTheSame):
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={"detail": exception.detail},
         )
 
