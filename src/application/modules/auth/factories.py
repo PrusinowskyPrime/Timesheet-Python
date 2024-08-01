@@ -4,7 +4,7 @@ from src.application.modules.auth.dtos import AuthenticatedUserDTO, SuccessAuthe
 
 
 class AuthenticatedUserDTOFactory:
-    def create(self, user_id: int, email: str) -> AuthenticatedUserDTO:
+    def create(self, user_id: int | None, email: str) -> AuthenticatedUserDTO:
         return AuthenticatedUserDTO(id=user_id, sub=email)
 
 

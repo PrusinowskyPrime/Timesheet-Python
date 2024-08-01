@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.api.modules.auth.requests import PasswordChangeRequest
 from src.application.modules.auth.dtos import (
     CurrentUserDTO,
     ChangePasswordDTO,
@@ -75,12 +74,10 @@ async def refresh_token(
     status_code=status.HTTP_200_OK,
 )
 async def change_password(
-    request: PasswordChangeRequest,
+    request: ChangePasswordDTO,
     current_user: Annotated[CurrentUserDTO, Depends(get_current_user)],
     password_change_service: Annotated[
         PasswordChangeService, Depends(get_password_change_service)
     ],
 ):
-    return await password_change_service.change_password(
-        current_user.id, ChangePasswordDTO(**request.model_dump())
-    )
+    return await password_change_service.change_password(current_user.id, request)
