@@ -1,9 +1,8 @@
 # pylint: disable=R0801
-from dataclasses import Field
 from datetime import datetime
 from typing import Optional, Self
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, Field
 
 from src.application.modules.common.exceptions import PasswordDoesNotMatch
 

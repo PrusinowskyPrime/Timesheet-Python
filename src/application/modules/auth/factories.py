@@ -1,6 +1,10 @@
 from datetime import datetime
 
-from src.application.modules.auth.dtos import AuthenticatedUserDTO, SuccessAuthenticationDTO, CurrentUserDTO
+from src.application.modules.auth.dtos import (
+    AuthenticatedUserDTO,
+    SuccessAuthenticationDTO,
+    CurrentUserDTO,
+)
 
 
 class AuthenticatedUserDTOFactory:
@@ -10,7 +14,11 @@ class AuthenticatedUserDTOFactory:
 
 class SuccessAuthenticationDTOFactory:
     def create(
-        self, token_type: str, access_token: str, refresh_token: str, expired_at: datetime
+        self,
+        token_type: str,
+        access_token: str,
+        refresh_token: str,
+        expired_at: datetime,
     ) -> SuccessAuthenticationDTO:
         return SuccessAuthenticationDTO(
             token_type=token_type,
