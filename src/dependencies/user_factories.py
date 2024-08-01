@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.application.modules.user.use_cases import UserGetByEmailOrUsernameUseCase, UserGetByIdUseCase
 from src.dependencies.auth.creators import (
     get_password_hash_service,
 )
@@ -41,15 +42,33 @@ def get_user_repository(
     )
 
 
+def get_user_get_by_email_or_username_use_case(
+    user_repository: Annotated[IUserRepository, Depends(get_user_repository)]
+) -> UserGetByEmailOrUsernameUseCase:
+    return UserGetByEmailOrUsernameUseCase(user_repository)
+
+
+def get_user_get_by_id_use_case(
+    user_repository: Annotated[IUserRepository, Depends(get_user_repository)]
+) -> UserGetByIdUseCase:
+    return UserGetByIdUseCase(user_repository)
+
+
 def get_user_service(
     user_repository: Annotated[IUserRepository, Depends(get_user_repository)],
     user_create_dto_to_domain_mapper: Annotated[
         UserCreateDTOToDomainMapper, Depends(get_user_create_dto_to_domain_mapper)
     ],
-    password_hasher: Annotated[PasswordHashService, Depends(get_password_hash_service)]
+    password_hasher: Annotated[PasswordHashService, Depends(get_password_hash_service)],
+    user_get_by_email_or_username_use_case: Annotated[
+        UserGetByEmailOrUsernameUseCase, Depends(get_user_get_by_email_or_username_use_case)
+    ],
+    user_get_by_id_use_case: Annotated[UserGetByIdUseCase, Depends(get_user_get_by_id_use_case)]
 ) -> UserService:
     return UserService(
         user_repository=user_repository,
         user_create_dto_to_domain_mapper=user_create_dto_to_domain_mapper,
-        password_hasher=password_hasher
+        password_hasher=password_hasher,
+        user_get_by_email_or_username_use_case=user_get_by_email_or_username_use_case,
+        user_get_by_id_use_case=user_get_by_id_use_case
     )
