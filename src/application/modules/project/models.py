@@ -1,10 +1,13 @@
-# class Project:
-#     ...
-#     # name: str = Field(..., min_length=5, max_length=50)
-#     # description: str = Field(..., min_length=5, max_length=200)
-#     # time_logs: List[TimeLog] = Field(...)
-#     # owner_id: str = Field(...)
-#
-#     # @model_validator(mode="after")
-#     # def validate_owner_id(self):
-#     #     validate_object_id_type(self.owner_id)
+from sqlalchemy import String, Text
+from sqlalchemy.orm import MappedColumn, mapped_column
+
+from src.application.modules.common.base_model import BaseModel
+
+
+class ProjectModel(BaseModel):
+    __tablename__ = "projects"
+
+    name: MappedColumn[str] = mapped_column(String(255))
+    description: MappedColumn[str] = mapped_column(Text(2000))
+    # Dodać ownera
+    # Dodać constraint (user, nazwa)

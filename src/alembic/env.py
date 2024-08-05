@@ -32,6 +32,7 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 
 from src.application.modules.common.base_model import BaseModel
+from src.application.modules.project.models import ProjectModel
 from src.application.modules.user.models import UserModel
 
 target_metadata = BaseModel.metadata
