@@ -30,7 +30,7 @@ async def create_project(
     request: ProjectCreateDTO,
     project_service: Annotated[ProjectService, Depends(get_project_service)],
 ):
-    return await project_service.create(ProjectCreateDTO(**request.model_dump()))
+    return await project_service.create(request)
 
 
 @router.put(
