@@ -5,7 +5,10 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.application.modules.user.dtos import UserDTO
-from src.application.modules.user.mappers import UserModelToDomainMapper, UserDomainToModelMapper
+from src.application.modules.user.mappers import (
+    UserModelToDomainMapper,
+    UserDomainToModelMapper,
+)
 from src.application.modules.user.models import UserModel
 
 
@@ -40,7 +43,7 @@ class UserRepository(IUserRepository):
         self,
         session: AsyncSession,
         user_domain_to_model_mapper: UserDomainToModelMapper,
-        user_model_to_domain_mapper: UserModelToDomainMapper
+        user_model_to_domain_mapper: UserModelToDomainMapper,
     ):
         self._session = session
         self._user_domain_to_model_mapper = user_domain_to_model_mapper
@@ -52,7 +55,7 @@ class UserRepository(IUserRepository):
         self._session.add(model)
         await self._session.commit()
 
-        return self._user_model_to_domain_mapper.map(model) # type: ignore
+        return self._user_model_to_domain_mapper.map(model)  # type: ignore
 
     async def update(self, user: UserDTO) -> UserDTO:
         model = self._user_domain_to_model_mapper.map(user)
@@ -60,7 +63,7 @@ class UserRepository(IUserRepository):
         await self._session.merge(model)
         await self._session.commit()
 
-        return user
+        return self._user_model_to_domain_mapper.map(model)  # type: ignore
 
     async def delete(self, user: UserDTO) -> None:
         query = delete(UserModel).where(UserModel.id == user.id)
@@ -75,7 +78,7 @@ class UserRepository(IUserRepository):
         for user in result.scalars().all():
             data.append(self._user_model_to_domain_mapper.map(user))
 
-        return data # type: ignore
+        return data  # type: ignore
 
     async def get_by_id(self, user_id: int) -> UserDTO | None:
         result = await self._session.execute(
@@ -87,15 +90,13 @@ class UserRepository(IUserRepository):
     async def get_by_email(self, email: str) -> UserDTO | None:
         result = await self._session.execute(
             select(UserModel).where(UserModel.email == email)
-
         )
 
         return self._user_model_to_domain_mapper.map(result.scalars().first())
 
     async def get_by_fullname(self, fullname: str) -> UserDTO | None:
         result = await self._session.execute(
-            select(UserModel)
-            .where(UserModel.fullname == fullname)
+            select(UserModel).where(UserModel.fullname == fullname)
         )
 
         return self._user_model_to_domain_mapper.map(result.scalars().first())
