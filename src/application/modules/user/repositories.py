@@ -63,7 +63,7 @@ class UserRepository(IUserRepository):
         await self._session.merge(model)
         await self._session.commit()
 
-        return self._user_model_to_domain_mapper.map(model)
+        return self._user_model_to_domain_mapper.map(model)  # type: ignore
 
     async def delete(self, user: UserDTO) -> None:
         query = delete(UserModel).where(UserModel.id == user.id)

@@ -51,16 +51,15 @@ class ProjectRepository(IProjectRepository):
         self._session.add(model)
         await self._session.commit()
 
-        return self._project_model_to_project_dto_mapper.map(model)
+        return self._project_model_to_project_dto_mapper.map(model)  # type: ignore
 
     async def update(self, project: ProjectDTO) -> ProjectDTO:
         model = self._project_dto_to_project_model_mapper.map(project)
-        print(model.id)
 
         await self._session.merge(model)
         await self._session.commit()
 
-        return self._project_model_to_project_dto_mapper.map(model)
+        return self._project_model_to_project_dto_mapper.map(model)  # type: ignore
 
     async def delete(self, project: ProjectDTO) -> None:
         query = delete(ProjectModel).where(ProjectModel.id == project.id)
